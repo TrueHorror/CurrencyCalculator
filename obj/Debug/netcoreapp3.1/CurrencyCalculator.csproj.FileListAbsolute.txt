@@ -11,3 +11,8 @@ C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\net
 C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.dll
 C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.pdb
 C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.genruntimeconfig.cache
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\bin\Debug\netcoreapp3.1\System.Net.Http.Json.dll
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\bin\Debug\netcoreapp3.1\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\bin\Debug\netcoreapp3.1\System.Text.Encodings.Web.dll
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\bin\Debug\netcoreapp3.1\System.Text.Json.dll
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.csproj.CopyComplete

@@ -2,7 +2,9 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CurrencyCalculator
@@ -10,8 +12,13 @@ namespace CurrencyCalculator
     class Program
     {
         private static readonly HttpClient client = new HttpClient();
+        private static readonly string API_KEY = "5aa758d8aba66377c93879b314ef80cf"; //Usually, i NEVER keep private keys in the code ;)
         static void Main(string[] args)
         {
+            client.BaseAddress = new Uri("http://data.fixer.io/api/");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
 
             CurrencyCodesAndValuePromptAsync();
             
@@ -20,50 +27,86 @@ namespace CurrencyCalculator
         private static void CurrencyCodesAndValuePromptAsync()
         {
             Console.WriteLine("Welcome to Currency Calculator\nPlease enter first currency: ");
-            string firstCurrCode = Console.ReadLine();
+            string firstCurrCode = Console.ReadLine().Trim().ToUpper();
 
             Console.WriteLine("Please enter second currency: ");
-            string secondCurrCode = Console.ReadLine();
+            string secondCurrCode = Console.ReadLine().Trim().ToUpper();
 
             Console.WriteLine($"Enter value/amount of {firstCurrCode}: ");
             string currencyValInput = Console.ReadLine();
 
-            if (!int.TryParse(currencyValInput, out _))
+            int currencyVal;
+            if (int.TryParse(currencyValInput, out currencyVal))
             {
-                CurrencyCodesAndValuePromptAsync(); // Try again with a number when asked to enter value/amount
-                
-            }else
-            {
-                int currencyVal = int.Parse(currencyValInput);
-                RunCalculation(currencyVal, firstCurrCode, secondCurrCode).GetAwaiter().GetResult(); ;
+                Console.Write("Do you want to check historical currencies (y/n):");
+                string historicalChoice = Console.ReadLine().ToLower();
+
+                string path;
+                switch (historicalChoice)
+                {
+                    case "y":
+                        path = HistoricalPath();
+                        RunCurrenciesCalculation(currencyVal, firstCurrCode, secondCurrCode, path).GetAwaiter().GetResult();
+                        break;
+                    case "n":
+                        RunCurrenciesCalculation(currencyVal, firstCurrCode, secondCurrCode, $"latest?access_key={API_KEY}").GetAwaiter().GetResult();
+                        break;
+                    default:
+                        CurrencyCodesAndValuePromptAsync();
+                        break;
+                }
 
             }
-
-            Console.ReadLine();
+            else
+            {
+                Console.WriteLine("Value/amount needs to be anumber... Restarting...");
+                CurrencyCodesAndValuePromptAsync();
+                
+            }
+            
         }
 
-        private static async Task RunCalculation(int currencyVal, string firstCurrCode, string secondCurrCode)
+        private static string HistoricalPath()
         {
-            string accessKey = "5aa758d8aba66377c93879b314ef80cf"; //Usually, i NEVER keep private keys in the code ;)
-            client.BaseAddress = new Uri("http://data.fixer.io/api/");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
+            //http://data.fixer.io/api/2013-12-24
+            //? access_key = API_KEY
+            //& base = GBP
+            //& symbols = USD,CAD,EUR
+            Console.WriteLine("Please enter witch date for currency rates (YYYY-MM-DD)");
+            string dateInput = Console.ReadLine().Trim();
+            var r = new Regex(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$");
+            if (r.IsMatch(dateInput))
+            {
+                return $"{dateInput}?access_key={API_KEY}";
 
-            //Get latest rates
+            }
+            return "";
+        }
 
-            //Base is EUR, get firstCurrCode value in EUR and then secondCurrCode value in firstCurrCode
-
-            //EUR: 1, NOK:10 10/10.2311243 * secondCurrCode
-            
-            
-            //return firstCurrCode value in secondCurrCode
-
+        private static async Task RunCurrenciesCalculation(int currencyVal, string firstCurrCode, string secondCurrCode, string path)
+        {
             try
             {
+                var json = await GetJsonWithExchangeRates(path); // object with latest rates based on EUR. Need to convert EUR to firstCurrCode
+                
+
                 //Get exchange rate of selected currencies
-                // 
-                var toCurrency = await GetExchangeRates($"latest?access_key={accessKey}"); // object with latest rates based on EUR. Need to convert EUR to firstCurrCode then 
+                double firstCurrCodeRate;
+                double secondCurrCodeRate;
+
+                //Find firstCurrCode and secondCurrCode in json.Rates
+                if (json.Rates.TryGetValue(firstCurrCode, out firstCurrCodeRate) && json.Rates.TryGetValue(secondCurrCode, out secondCurrCodeRate))
+                {
+                    
+                    double convertedCurrency = convertCurrency(currencyVal, firstCurrCodeRate, secondCurrCodeRate);
+                    Console.WriteLine($"{firstCurrCode}: {currencyVal} -> {secondCurrCode}: {convertedCurrency}");
+ 
+                }
+                else
+                {
+                    //Returns to main menu if keys are wrong
+                    Console.WriteLine("One of the selected currencies does not exist. Please try again.");
+                }
 
             }
             catch(Exception e)
@@ -71,28 +114,29 @@ namespace CurrencyCalculator
                 Console.WriteLine(e.Message);
             }
 
-
         }
 
-        private static async Task<AllCurrencies> GetExchangeRates(string path)
+        private static double convertCurrency(int currencyVal, double firstCurrCodeRate, double secondCurrCodeRate)
         {
-            //TODO: Rename 'currency'
-            var jsonString = "";
-            
-            var response = await client.GetAsync(path);
-            if (response.IsSuccessStatusCode)
+            //Base Currency from API is in EUR, so we have to make the selected
+            // value into EUR then multiply with the rate of the currency we want to convert to.  
+            double firstCurrInBaseCurr = currencyVal / firstCurrCodeRate;
+            return firstCurrInBaseCurr * secondCurrCodeRate;
+        }
+
+        private static async Task<AllCurrencies> GetJsonWithExchangeRates(string path)
+        {
+            try
             {
-                jsonString = await response.Content.ReadAsStringAsync();
 
-                AllCurrencies json = JsonSerializer.Deserialize<AllCurrencies>(jsonString);
-                Console.WriteLine($"Date: {json.Date}\nSuccess: {json.Success}\nTimestamp: {json.Timestamp}\nBase: {json.Base}\n Rates: {json.Rates}");
-                Console.ReadLine();
-                return json;
+                return await client.GetFromJsonAsync<AllCurrencies>(path);
             }
-
-            return null;
-           
-
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        
         }
     }
 }

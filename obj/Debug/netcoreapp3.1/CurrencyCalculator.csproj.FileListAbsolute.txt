@@ -1,0 +1,13 @@
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\bin\Debug\netcoreapp3.1\CurrencyCalculator.exe
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\bin\Debug\netcoreapp3.1\CurrencyCalculator.deps.json
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\bin\Debug\netcoreapp3.1\CurrencyCalculator.runtimeconfig.json
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\bin\Debug\netcoreapp3.1\CurrencyCalculator.runtimeconfig.dev.json
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\bin\Debug\netcoreapp3.1\CurrencyCalculator.dll
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\bin\Debug\netcoreapp3.1\CurrencyCalculator.pdb
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.csprojAssemblyReference.cache
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.AssemblyInfoInputs.cache
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.AssemblyInfo.cs
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.csproj.CoreCompileInputs.cache
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.dll
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.pdb
+C:\Users\fredr\Documents\Arvato\Teknisk-oppgave\CurrencyCalculator\obj\Debug\netcoreapp3.1\CurrencyCalculator.genruntimeconfig.cache

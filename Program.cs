@@ -46,7 +46,14 @@ namespace CurrencyCalculator
                 {
                     case "y":
                         path = HistoricalPath();
-                        RunCurrenciesCalculation(currencyVal, firstCurrCode, secondCurrCode, path).GetAwaiter().GetResult();
+                        if(path != "")
+                        {
+                            RunCurrenciesCalculation(currencyVal, firstCurrCode, secondCurrCode, path).GetAwaiter().GetResult();
+                        }
+                        else
+                        {
+                            Console.WriteLine("Wrong date format. Try again.");
+                        }
                         break;
                     case "n":
                         RunCurrenciesCalculation(currencyVal, firstCurrCode, secondCurrCode, $"latest?access_key={API_KEY}").GetAwaiter().GetResult();
@@ -74,6 +81,8 @@ namespace CurrencyCalculator
             //& symbols = USD,CAD,EUR
             Console.WriteLine("Please enter witch date for currency rates (YYYY-MM-DD)");
             string dateInput = Console.ReadLine().Trim();
+
+            //Regex for matching YYYY-MM-DD
             var r = new Regex(@"^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$");
             if (r.IsMatch(dateInput))
             {
@@ -95,18 +104,23 @@ namespace CurrencyCalculator
                 double secondCurrCodeRate;
 
                 //Find firstCurrCode and secondCurrCode in json.Rates
-                if (json.Rates.TryGetValue(firstCurrCode, out firstCurrCodeRate) && json.Rates.TryGetValue(secondCurrCode, out secondCurrCodeRate))
+                if(json != null)
                 {
+
+                    if (json.Rates.TryGetValue(firstCurrCode, out firstCurrCodeRate) && json.Rates.TryGetValue(secondCurrCode, out secondCurrCodeRate))
+                    {
                     
-                    double convertedCurrency = convertCurrency(currencyVal, firstCurrCodeRate, secondCurrCodeRate);
-                    Console.WriteLine($"{firstCurrCode}: {currencyVal} -> {secondCurrCode}: {convertedCurrency}");
+                        double convertedCurrency = convertCurrency(currencyVal, firstCurrCodeRate, secondCurrCodeRate);
+                        Console.WriteLine($"{firstCurrCode}: {currencyVal} -> {secondCurrCode}: {convertedCurrency}");
  
+                    }
+                    else
+                    {
+                        //Returns to main menu if keys are wrong
+                        Console.WriteLine("One of the selected currencies does not exist. Please try again.");
+                    }
                 }
-                else
-                {
-                    //Returns to main menu if keys are wrong
-                    Console.WriteLine("One of the selected currencies does not exist. Please try again.");
-                }
+                
 
             }
             catch(Exception e)
